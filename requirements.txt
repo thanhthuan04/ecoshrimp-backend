@@ -4,6 +4,7 @@ pydantic
 pydantic-settings
 motor
 joblib
+httpx
 paho-mqtt
 xgboost
 scikit-learn

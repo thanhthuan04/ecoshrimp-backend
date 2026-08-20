@@ -6,6 +6,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core.database import close_mongo_connection, connect_to_mongo
 from app.core.env import settings
 from app.mqtt.client import start_mqtt_client, stop_mqtt_client
+from app.routers.control import router as control_router
+from app.routers.history import router as history_router
+from app.routers.settings import router as settings_router
 from app.ws.router import router as ws_router
 
 @asynccontextmanager
@@ -31,6 +34,9 @@ app.add_middleware(
 )
 
 app.include_router(ws_router)
+app.include_router(settings_router, prefix="/api/settings", tags=["settings"])
+app.include_router(history_router, prefix="/api/history", tags=["history"])
+app.include_router(control_router, prefix="/api/control", tags=["control"])
 
 @app.get("/health")
 async def health_check():
