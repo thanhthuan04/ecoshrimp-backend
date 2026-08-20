@@ -1,0 +1,11 @@
+fastapi
+uvicorn[standard]
+pydantic
+pydantic-settings
+motor
+paho-mqtt
+xgboost
+scikit-learn
+pandas
+numpy
+python-dotenv
