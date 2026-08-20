@@ -3,6 +3,7 @@ uvicorn[standard]
 pydantic
 pydantic-settings
 motor
+joblib
 paho-mqtt
 xgboost
 scikit-learn
