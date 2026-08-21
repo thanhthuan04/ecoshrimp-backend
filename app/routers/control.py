@@ -15,7 +15,7 @@ class ControlCommand(BaseModel):
     device: DeviceName
     state: DeviceState
 
-@router.post("", dependencies=[Depends(verify_api_key)])
+@router.post("", dependencies=[Depends(verify_api_key)], summary="Điều khiển thiết bị (cần API key)")
 async def control_device(command: ControlCommand):
     publish_actuator_command(command.device, command.state)
     return {"device": command.device, "state": command.state, "status": "sent"}

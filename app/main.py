@@ -22,12 +22,18 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title=settings.APP_NAME,
     version="0.1.0",
+    description=(
+        "API giám sát và điều khiển ao nuôi tôm realtime: dữ liệu cảm biến qua MQTT, "
+        "dự báo AI, lịch sử, cấu hình ngưỡng, và điều khiển thiết bị. "
+        "Xem chi tiết từng endpoint bên dưới (Swagger UI)."
+    ),
     lifespan=lifespan,
 )
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins_list,
+    allow_origin_regex=r"https://.*\.vercel\.app",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
