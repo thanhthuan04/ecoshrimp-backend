@@ -8,6 +8,9 @@ from app.services.automation_service import run_automation
 from app.services.settings_service import get_current_settings
 from app.ws.manager import ws_manager
 
+def _normalize_water_level(raw_level: int) -> bool:
+    return raw_level == 0
+
 async def handle_sensor_message(payload: dict) -> None:
     try:
         data = SensorLogCreate(**payload)
@@ -16,7 +19,10 @@ async def handle_sensor_message(payload: dict) -> None:
         return
 
     forecast = predict_forecast(data)
-    log_entry = SensorLogModel(**data.model_dump(), forecast=forecast)
+    is_water_normal = _normalize_water_level(data.level)
+    log_entry = SensorLogModel(
+        **data.model_dump(exclude={"level"}), level=is_water_normal, forecast=forecast
+    )
 
     await save_sensor_log(log_entry)
     await ws_manager.broadcast(log_entry.model_dump(mode="json"))

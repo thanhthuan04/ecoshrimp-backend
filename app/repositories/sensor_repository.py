@@ -9,10 +9,15 @@ async def get_latest_sensor_log() -> dict | None:
     db = get_database()
     return await db["sensor_logs"].find_one(sort=[("timestamp", -1)])
 
-async def get_history_aggregated(start_date, date_format: str) -> list[dict]:
+async def get_logs_for_date(start_date, end_date) -> list[dict]:
+    db = get_database()
+    cursor = db["sensor_logs"].find({"timestamp": {"$gte": start_date, "$lt": end_date}}).sort("timestamp", 1)
+    return [doc async for doc in cursor]
+
+async def get_history_aggregated(start_date, end_date, date_format: str) -> list[dict]:
     db = get_database()
     pipeline = [
-        {"$match": {"timestamp": {"$gte": start_date}}},
+        {"$match": {"timestamp": {"$gte": start_date, "$lte": end_date}}},
         {
             "$group": {
                 "_id": {"$dateToString": {"format": date_format, "date": "$timestamp"}},
