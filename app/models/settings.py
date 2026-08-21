@@ -1,3 +1,5 @@
+from typing import Literal
+
 from pydantic import BaseModel
 
 class TimerConfig(BaseModel):
@@ -6,6 +8,8 @@ class TimerConfig(BaseModel):
     end: str = ""
 
 class SettingsModel(BaseModel):
+    system_mode: Literal["auto", "manual"] = "manual"
+
     do_danger: float = 4.0
     ai_early_warning: int = 30
     temp_max: float = 35.0
@@ -24,8 +28,8 @@ class SettingsModel(BaseModel):
     timer_pump_out: TimerConfig = TimerConfig()
     timer_light: TimerConfig = TimerConfig()
 
-
 class SettingsUpdate(BaseModel):
+    system_mode: Literal["auto", "manual"] | None = None
     do_danger: float | None = None
     ai_early_warning: int | None = None
     temp_max: float | None = None

@@ -1,3 +1,4 @@
+import asyncio
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -9,13 +10,16 @@ from app.mqtt.client import start_mqtt_client, stop_mqtt_client
 from app.routers.control import router as control_router
 from app.routers.history import router as history_router
 from app.routers.settings import router as settings_router
+from app.services.scheduler_service import start_scheduler_loop
 from app.ws.router import router as ws_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await connect_to_mongo()
     start_mqtt_client()
+    scheduler_task = asyncio.create_task(start_scheduler_loop())
     yield
+    scheduler_task.cancel()
     stop_mqtt_client()
     await close_mongo_connection()
 
