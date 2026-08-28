@@ -11,23 +11,5 @@ async def get_latest_sensor_log() -> dict | None:
 
 async def get_logs_for_date(start_date, end_date) -> list[dict]:
     db = get_database()
-    cursor = db["sensor_logs"].find({"timestamp": {"$gte": start_date, "$lt": end_date}}).sort("timestamp", 1)
-    return [doc async for doc in cursor]
-
-async def get_history_aggregated(start_date, end_date, date_format: str) -> list[dict]:
-    db = get_database()
-    pipeline = [
-        {"$match": {"timestamp": {"$gte": start_date, "$lte": end_date}}},
-        {
-            "$group": {
-                "_id": {"$dateToString": {"format": date_format, "date": "$timestamp"}},
-                "avg_temp": {"$avg": "$temp"},
-                "avg_ph": {"$avg": "$ph"},
-                "avg_do": {"$avg": "$do"},
-                "avg_turbidity": {"$avg": "$turbidity"},
-            }
-        },
-        {"$sort": {"_id": 1}},
-    ]
-    cursor = db["sensor_logs"].aggregate(pipeline)
+    cursor = db["sensor_logs"].find({"timestamp": {"$gte": start_date, "$lte": end_date}}).sort("timestamp", 1)
     return [doc async for doc in cursor]
