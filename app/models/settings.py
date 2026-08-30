@@ -10,6 +10,8 @@ class TimerConfig(BaseModel):
 class SettingsModel(BaseModel):
     system_mode: Literal["auto", "manual"] = "manual"
 
+    farm_location: str = "Đà Nẵng"
+
     do_danger: float = 4.0
     ai_early_warning: int = 30
     temp_max: float = 35.0
@@ -30,6 +32,7 @@ class SettingsModel(BaseModel):
 
 class SettingsUpdate(BaseModel):
     system_mode: Literal["auto", "manual"] | None = None
+    farm_location: str | None = None
     do_danger: float | None = None
     ai_early_warning: int | None = None
     temp_max: float | None = None
