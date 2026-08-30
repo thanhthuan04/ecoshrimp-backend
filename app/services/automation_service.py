@@ -2,9 +2,6 @@ from app.models.sensor_log import ForecastData
 from app.models.settings import SettingsModel
 from app.mqtt.client import publish_actuator_command
 
-_TEMP_LOW_THRESHOLD = 22.0
-_PH_LOW_THRESHOLD = 6.5
-
 async def run_automation(forecast: ForecastData, config: SettingsModel) -> None:
     if config.system_mode != "auto":
         return
@@ -12,7 +9,7 @@ async def run_automation(forecast: ForecastData, config: SettingsModel) -> None:
     if config.auto_aerator:
         _decide_aerator(forecast, config)
 
-    if config.auto_pump_in or config.auto_pump_out or config.auto_aerator:
+    if config.auto_light:
         _decide_light(forecast, config)
 
     if config.auto_pump_in or config.auto_pump_out:
@@ -23,7 +20,7 @@ def _decide_aerator(forecast: ForecastData, config: SettingsModel) -> None:
     publish_actuator_command("aerator", "ON" if should_run else "OFF")
 
 def _decide_light(forecast: ForecastData, config: SettingsModel) -> None:
-    temp_too_cold = forecast.future_temp < _TEMP_LOW_THRESHOLD
+    temp_too_cold = forecast.future_temp < config.temp_low_threshold
     temp_out_of_range = not config.temp_min <= forecast.future_temp <= config.temp_max
 
     should_run = temp_out_of_range and temp_too_cold
@@ -31,11 +28,11 @@ def _decide_light(forecast: ForecastData, config: SettingsModel) -> None:
 
 def _decide_pump(forecast: ForecastData, config: SettingsModel) -> None:
     temp_out_of_range = not config.temp_min <= forecast.future_temp <= config.temp_max
-    temp_too_cold = forecast.future_temp < _TEMP_LOW_THRESHOLD
+    temp_too_cold = forecast.future_temp < config.temp_low_threshold
     temp_wants_pump_in = temp_out_of_range and not temp_too_cold
 
     ph_out_of_range = not config.ph_min <= forecast.future_ph <= config.ph_max
-    ph_too_low = forecast.future_ph < _PH_LOW_THRESHOLD
+    ph_too_low = forecast.future_ph < config.ph_low_threshold
     ph_wants_pump_in = ph_out_of_range and ph_too_low
     ph_wants_pump_out = ph_out_of_range and not ph_too_low
 
