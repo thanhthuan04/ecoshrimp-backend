@@ -5,6 +5,7 @@ import paho.mqtt.client as mqtt
 
 from app.core.env import settings
 from app.mqtt.handlers import handle_sensor_message
+from app.mqtt.publisher import publish_boot_safe_state, set_client
 
 _main_loop: asyncio.AbstractEventLoop | None = None
 _client: mqtt.Client | None = None
@@ -36,6 +37,7 @@ def start_mqtt_client() -> None:
     _main_loop = asyncio.get_event_loop()
 
     _client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
+    set_client(_client)
 
     if settings.MQTT_USERNAME:
         _client.username_pw_set(settings.MQTT_USERNAME, settings.MQTT_PASSWORD)
@@ -57,15 +59,3 @@ def stop_mqtt_client() -> None:
         _client.loop_stop()
         _client.disconnect()
         print("[MQTT] Đã ngắt kết nối.")
-
-def publish_actuator_command(device: str, state: str) -> None:
-    if _client is None:
-        raise RuntimeError("MQTT client chưa khởi động.")
-    topic = f"{settings.MQTT_TOPIC_ACTUATOR}/{device}"
-    mqtt_payload = "1" if state == "ON" else "0"
-    _client.publish(topic, mqtt_payload)
-
-def publish_boot_safe_state() -> None:
-    publish_actuator_command("pump_out", "OFF")
-    publish_actuator_command("aerator", "OFF")
-    print("[MQTT] Đã publish trạng thái an toàn lúc khởi động (pump_out, aerator = OFF).")

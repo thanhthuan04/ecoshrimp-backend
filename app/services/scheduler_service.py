@@ -2,7 +2,7 @@ import asyncio
 from datetime import datetime
 
 from app.models.settings import SettingsModel, TimerConfig
-from app.mqtt.client import publish_actuator_command
+from app.mqtt.publisher import publish_actuator_command
 from app.services.settings_service import get_current_settings
 
 _CHECK_INTERVAL_SECONDS = 60

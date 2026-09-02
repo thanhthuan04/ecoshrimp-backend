@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 
 from app.core.security import verify_api_key
-from app.mqtt.client import publish_actuator_command
+from app.mqtt.publisher import publish_actuator_command
 from app.services.settings_service import apply_settings_update
 from app.models.settings import SettingsUpdate
 
