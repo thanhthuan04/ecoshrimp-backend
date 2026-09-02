@@ -7,8 +7,8 @@ from app.models.sensor_log import ForecastData, SensorLogCreate
 
 MODEL_PATH = Path(__file__).resolve().parent / "models" / "pond_forecaster_xgb_latest.pkl"
 
-_SMOOTHING_WEIGHT_PREDICTED = 0.85
-_SMOOTHING_WEIGHT_CURRENT = 0.15
+_SMOOTHING_WEIGHT_CURRENT = 0.85
+_SMOOTHING_WEIGHT_PREDICTED = 0.15
 
 _model = None
 
@@ -39,4 +39,4 @@ def predict(data: SensorLogCreate) -> ForecastData:
 
 def _smooth(predicted: np.ndarray, current: list[float]) -> np.ndarray:
     current_arr = np.array(current)
-    return _SMOOTHING_WEIGHT_PREDICTED * predicted + _SMOOTHING_WEIGHT_CURRENT * current_arr
+    return _SMOOTHING_WEIGHT_CURRENT * current_arr + _SMOOTHING_WEIGHT_PREDICTED * predicted

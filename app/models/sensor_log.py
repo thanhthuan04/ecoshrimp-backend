@@ -1,4 +1,5 @@
 from datetime import datetime
+
 from pydantic import BaseModel, Field
 
 class ForecastData(BaseModel):
@@ -13,7 +14,7 @@ class SensorLogModel(BaseModel):
     ph: float
     do: float
     turbidity: float
-    level: int = 1
+    level: bool = True
     forecast: ForecastData | None = None
 
 class SensorLogCreate(BaseModel):
