@@ -1,6 +1,6 @@
 from app.models.sensor_log import ForecastData
 from app.models.settings import SettingsModel
-from app.mqtt.client import publish_actuator_command
+from app.mqtt.publisher import publish_actuator_command
 
 async def run_automation(forecast: ForecastData, config: SettingsModel) -> None:
     if config.system_mode != "auto":
